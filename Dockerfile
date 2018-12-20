@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y wget && \
     chmod +x VMware-ovftool-${OVFTOOL_VERSION}-lin.x86_64.bundle && \
     ./VMware-ovftool-${OVFTOOL_VERSION}-lin.x86_64.bundle --console --required --eulas-agreed && \
     rm -f VMware-ovftool-${OVFTOOL_VERSION}-lin.x86_64.bundle && \
-    apt-get remove --purge --autoremove -y wget $(apt-mark showauto) && \
+    apt-get remove --purge --autoremove -y wget && \
     rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT ["ovftool"]
