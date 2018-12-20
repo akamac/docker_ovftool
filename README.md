@@ -1,1 +1,0 @@
-# ovftool_docker
