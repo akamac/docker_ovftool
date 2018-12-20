@@ -1,4 +1,5 @@
-FROM ubuntu:latest
+ARG BASE=ubuntu:latest
+FROM ${BASE}
 LABEL maintainer="alexey.miasoedov@gmail.com"
 
 ARG OVFTOOL_VERSION=4.3.0-10104578
