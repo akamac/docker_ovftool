@@ -5,7 +5,7 @@ RUN ["/makisu-internal/makisu", "build", "--compression=speed", "--dest=/makisu-
 
 
 
-FROM alpine:latest as layer
+FROM ubuntu:latest as layer
 
 RUN apt-get update && apt-get install -y jq
 
