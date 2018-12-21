@@ -1,6 +1,6 @@
 FROM gcr.io/makisu-project/makisu:v0.1.6 as makisu
 
-COPY base/Dockerfile context
+COPY base/Dockerfile /context/
 RUN ["/makisu-internal/makisu", "build", "--compression=speed", "--dest=/makisu-storage/layers.tar", "--modifyfs=true", "-t=layers", "/context"]
 
 
