@@ -1,8 +1,16 @@
 FROM gcr.io/makisu-project/makisu:v0.1.6 AS makisu
 
-COPY base/Dockerfile /context/
-RUN ["/makisu-internal/makisu", "build", "--compression=speed", "--dest=/makisu-storage/layers.tar", "--modifyfs=true", "-t=layers", "/context"]
+ARG OVFTOOL_VERSION=4.3.0-10104578
 
+COPY base/Dockerfile /context/
+RUN ["/makisu-internal/makisu", \
+     "build", \
+     "--compression=speed", \
+     "--dest=/makisu-storage/layers.tar", \
+     "--modifyfs=true", \
+     "--build-args={\"OVFTOOL_VERSION\": \"${OVFTOOL_VERSION}\"}", \
+     "-t=layers", \
+     "/context"]
 
 
 FROM ubuntu:latest AS layer
@@ -21,7 +29,9 @@ FROM ubuntu:latest
 LABEL maintainer="alexey.miasoedov@gmail.com"
 
 COPY --from=layer /tmp/ovftool.tar.gz .
-RUN tar xzf ovftool.tar.gz && chmod +x /usr/lib/vmware-ovftool/ovftool && rm ovftool.tar.gz
+RUN tar xzf ovftool.tar.gz && \
+    chmod +x /usr/lib/vmware-ovftool/ovftool && \
+    rm ovftool.tar.gz
 
 ENTRYPOINT ["/usr/lib/vmware-ovftool/ovftool"]
 CMD ["--help"]
