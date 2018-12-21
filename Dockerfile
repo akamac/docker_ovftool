@@ -1,13 +1,26 @@
-FROM debian:stable-slim
+FROM gcr.io/makisu-project/makisu:v0.1.6 as makisu
+
+COPY base/Dockerfile context
+RUN makisu build --compression=speed --dest=/makisu-storage/layers.tar --modifyfs=true -t=layers /context
+
+
+
+FROM alpine:latest as layer
+
+RUN apt-get update && apt-get install -y jq
+
+WORKDIR /tmp
+COPY --from=makisu /makisu-storage/layers.tar .
+# RUN tar xf layers.tar # COPY does untar
+RUN tar xf $(jq '.[0].Layers[-1]' manifest.json)
+RUN tar czf ovftool.tar.gz /etc/vmware-vix /etc/vmware /usr/lib/vmware-ovftool/
+
+
+
+FROM ubuntu:latest
 LABEL maintainer="alexey.miasoedov@gmail.com"
 
-ARG OVFTOOL_VERSION=4.3.0-10104578
+COPY --from=layer /tmp/ovftool.tar.gz .
 
-RUN apt-get update && apt-get install -y wget && \
-    wget -nv https://raw.githubusercontent.com/akamac/binaries/master/VMware-ovftool-${OVFTOOL_VERSION}-lin.x86_64.bundle && \
-    chmod +x VMware-ovftool-${OVFTOOL_VERSION}-lin.x86_64.bundle && \
-    ./VMware-ovftool-${OVFTOOL_VERSION}-lin.x86_64.bundle --console --required --eulas-agreed && \
-    apt-get remove --purge --autoremove -y wget && \
-    rm -rf VMware-ovftool-${OVFTOOL_VERSION}-lin.x86_64.bundle /var/lib/apt/lists/*
-
-ENTRYPOINT ["ovftool"]
+ENTRYPOINT ["/usr/lib/vmware-ovftool/ovftool"]
+CMD ["--help"]
