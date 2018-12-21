@@ -17,14 +17,11 @@ RUN tar czf ovftool.tar.gz etc/vmware-vix etc/vmware usr/lib/vmware-ovftool
 
 
 # squash this
-FROM alpine:latest
+FROM ubuntu:latest
 LABEL maintainer="alexey.miasoedov@gmail.com"
 
 COPY --from=layer /tmp/ovftool.tar.gz .
-RUN apk add -U bash && \
-    tar xzf ovftool.tar.gz && \
-    chmod +x /usr/lib/vmware-ovftool/ovftool && \
-    rm ovftool.tar.gz
+RUN tar xzf ovftool.tar.gz && chmod +x /usr/lib/vmware-ovftool/ovftool && rm ovftool.tar.gz
 
 ENTRYPOINT ["/usr/lib/vmware-ovftool/ovftool"]
 CMD ["--help"]
