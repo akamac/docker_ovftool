@@ -11,3 +11,4 @@ RUN apt-get update && apt-get install -y wget && \
     rm -rf VMware-ovftool-${OVFTOOL_VERSION}-lin.x86_64.bundle /var/lib/apt/lists/*
 
 ENTRYPOINT ["ovftool"]
+CMD ["--help"]
